@@ -1,0 +1,52 @@
+﻿@model List<HospitalManagementSystem.Models.LabRequest>
+@{
+    ViewData["Title"] = "Lab queue"; ViewBag.SidebarRole = "Lab"; Layout = "_DashboardLayout";
+}
+
+<h2>Results Ready to Send</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>No results are waiting to be sent.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Test</th>
+                <th>Result</th>
+                <th>Notes</th>
+                <th>Entered</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lr in Model)
+            {
+                var latestResult = lr.LabResult;
+                <tr>
+                    @* ASSUMPTION: Patient exposes a FullName property — adjust to match your model *@
+                    <td>@lr.Consultation.Visit.Patient.FullName</td>
+                    <td>@lr.TestName</td>
+                    <td>@latestResult?.ResultValue</td>
+                    <td>@latestResult?.Notes</td>
+                    <td>@lr.ResultEnteredAt?.ToLocalTime().ToString("g")</td>
+                    <td>
+                        <form asp-action="SendToDoctor" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@lr.Id" />
+                            <button type="submit" class="btn btn-primary btn-sm">Send to Doctor</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

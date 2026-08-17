@@ -1,0 +1,41 @@
+﻿@model HospitalManagementSystem.Data.ApplicationUser
+@{
+    ViewData["Title"] = "Edit user";
+    var roles = (string[])ViewBag.Roles;
+    var currentRole = (string?)ViewBag.CurrentRole;
+}
+<h1>Edit user</h1>
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <div class="mb-3">
+        <label class="form-label">Full name</label>
+        <input name="fullName" class="form-control" value="@Model.FullName" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input name="userName" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email (optional)</label>
+        <input name="email" type="email" class="form-control" />
+    </div>
+    @* <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input name="email" type="email" class="form-control" value="@Model.Email" required />
+    </div> *@
+    <div class="mb-3">
+        <label class="form-label">Role</label>
+        <select name="role" class="form-select" required>
+            @foreach (var r in roles)
+            {
+                <option value="@r" selected="@(r == currentRole)">@r</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">New password <span class="text-muted small">(leave blank to keep current)</span></label>
+        <input name="newPassword" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+</form>

@@ -1,0 +1,53 @@
+﻿@using HospitalManagementSystem.Models
+@{
+    ViewData["Title"] = "Cashier dashboard";
+    ViewBag.SidebarRole = "Cashier";
+    Layout = "_DashboardLayout";
+}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Pending payments</div>
+                <div class="fs-3 fw-bold">@ViewBag.PendingPaymentsCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Collected today (count)</div>
+                <div class="fs-3 fw-bold">@ViewBag.CollectedTodayCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Collected today (amount)</div>
+                <div class="fs-3 fw-bold">@(((decimal)ViewBag.CollectedTodayTotal).ToString("0.00"))</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <a class="btn btn-primary" asp-controller="Pharmacy" asp-action="PendingPayments">Go to pending payments</a>
+</div>
+
+<div class="card">
+    <div class="card-header">Next up</div>
+    <table class="table mb-0">
+        <thead><tr><th>Patient</th><th>Items</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var p in (List<Prescription>)ViewBag.RecentQueue)
+            {
+                <tr>
+                    <td>@p.Consultation.Visit.Patient.FullName</td>
+                    <td>@string.Join(", ", p.PrescriptionItems.Select(i => $"{i.Medicine.Name} x{i.Quantity}"))</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

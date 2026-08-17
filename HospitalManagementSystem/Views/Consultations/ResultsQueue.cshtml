@@ -1,0 +1,40 @@
+﻿@model List<Consultation>
+@{
+    ViewData["Title"] = "New Lab Results";
+}
+
+<h2>New Lab Results</h2>
+
+@if (!Model.Any())
+{
+    <p>No new lab results waiting for you.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Test(s)</th>
+                <th>Result received</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                var sentTests = c.LabRequests.Where(lr => lr.Status == LabRequestStatus.Completed);
+                <tr>
+                    <td>@c.Visit.Patient.FullName</td>
+                    <td>@string.Join(", ", sentTests.Select(t => t.TestName))</td>
+                    <td>@c.LastLabResultAt?.ToLocalTime().ToString("g")</td>
+                    <td>
+                        <a asp-action="Manage" asp-route-id="@c.Id" class="btn btn-primary btn-sm">
+                            Review &amp; Prescribe
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

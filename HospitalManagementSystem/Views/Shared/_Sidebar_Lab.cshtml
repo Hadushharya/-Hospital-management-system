@@ -1,0 +1,37 @@
+﻿@using HospitalManagementSystem.Data
+@using HospitalManagementSystem.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext Db
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    Func<string, string, string> active = (c, a) =>
+        (controller == c && action == a) ? "active" : "";
+
+    var readyToSendCount = await Db.LabRequests.CountAsync(lr => lr.Status == LabRequestStatus.ResultEntered);
+}
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link @active("Dashboard", "Lab")" asp-controller="Dashboard" asp-action="Lab">
+            Dashboard
+        </a>
+    </li>
+</ul>
+<div class="section-label">Tests</div>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link @active("LabRequests", "Queue")" asp-controller="LabRequests" asp-action="Queue">
+            Paid test queue
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link d-flex justify-content-between align-items-center @active("LabRequests", "ReadyToSend")"
+           asp-controller="LabRequests" asp-action="ReadyToSend">
+            Ready to send
+            @if (readyToSendCount > 0)
+            {
+                <span class="badge bg-danger rounded-pill">@readyToSendCount</span>
+            }
+        </a>
+    </li>
+</ul>

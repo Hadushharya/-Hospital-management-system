@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Reception dashboard";
+    ViewBag.SidebarRole = "Reception";
+    Layout = "_DashboardLayout";
+}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Patients registered today</div>
+                <div class="fs-3 fw-bold">@ViewBag.RegisteredToday</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Pending invoices</div>
+                <div class="fs-3 fw-bold">@ViewBag.PendingInvoiceCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Pending amount</div>
+                <div class="fs-3 fw-bold">@(((decimal)ViewBag.PendingInvoiceTotal).ToString("0.00"))</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Collected today</div>
+                <div class="fs-3 fw-bold">@(((decimal)ViewBag.CollectedTodayTotal).ToString("0.00"))</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2 mb-4">
+    <a class="btn btn-primary" asp-controller="Patients" asp-action="Register">+ Register new patient</a>
+    <a class="btn btn-outline-secondary" asp-controller="Invoices" asp-action="Pending">Go to billing queue</a>
+</div>
+
+<div class="mb-4" style="max-width:400px">
+    <form asp-controller="Patients" asp-action="Search" method="get" class="d-flex gap-2">
+        <input type="text" name="q" class="form-control" placeholder="Search patient by name or phone..." />
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+</div>
+<div class="card">
+    <div class="card-header">Recently registered</div>
+    <table class="table mb-0">
+        <thead><tr><th>Name</th><th>Phone</th><th>Registered</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var p in (List<Patient>)ViewBag.RecentPatients)
+            {
+                <tr>
+                    <td>@p.FullName</td>
+                    <td>@p.Phone</td>
+                    <td>@p.CreatedAt.ToLocalTime()</td>
+                    <td><a asp-controller="Patients" asp-action="Details" asp-route-id="@p.Id">View</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,23 @@
+@model Patient
+@{ ViewData["Title"] = "Patient details"; }
+<h1>@Model.FullName</h1>
+<p>@Model.Phone &middot; @Model.Gender &middot; DOB @Model.Age</p>
+<h5>Visits</h5>
+<table class="table">
+    <thead><tr><th>Date</th><th>Status</th><th>Invoices</th></tr></thead>
+    <tbody>
+    @foreach (var v in Model.Visits)
+    {
+        <tr>
+            <td>@v.VisitDate.ToLocalTime()</td>
+            <td>@v.Status</td>
+            <td>
+                @foreach (var inv in v.Invoices)
+                {
+                    <span class="badge bg-secondary">@inv.FeeType: @inv.Amount (@inv.Status)</span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

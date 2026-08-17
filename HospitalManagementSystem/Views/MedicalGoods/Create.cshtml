@@ -1,0 +1,26 @@
+@model MedicalGood
+@{ ViewData["Title"] = "Register medical good"; var suppliers = (List<Supplier>)ViewBag.Suppliers; }
+<h1>Register medical good</h1>
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3"><label class="form-label">Name</label><input asp-for="Name" class="form-control" required /></div>
+        <div class="col-md-6 mb-3"><label class="form-label">Batch no.</label><input asp-for="BatchNo" class="form-control" required /></div>
+        <div class="col-md-6 mb-3"><label class="form-label">Expiry date</label><input asp-for="ExpiryDate" type="date" class="form-control" required /></div>
+        <div class="col-md-6 mb-3"><label class="form-label">Unit of measure</label><input asp-for="UnitOfMeasure" class="form-control" placeholder="box, piece, pack..." /></div>
+        <div class="col-md-4 mb-3"><label class="form-label">Cost price</label><input asp-for="CostPrice" type="number" step="0.01" class="form-control" required /></div>
+        <div class="col-md-4 mb-3"><label class="form-label">Selling price</label><input asp-for="SellingPrice" type="number" step="0.01" class="form-control" required /></div>
+        <div class="col-md-4 mb-3"><label class="form-label">Quantity in stock</label><input asp-for="QuantityInStock" type="number" class="form-control" required /></div>
+        <div class="col-md-4 mb-3"><label class="form-label">Reorder level</label><input asp-for="ReorderLevel" type="number" class="form-control" required /></div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Supplier</label>
+            <select asp-for="SupplierId" class="form-select">
+                <option value="">-- none --</option>
+                @foreach (var s in suppliers)
+                {
+                    <option value="@s.Id">@s.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>

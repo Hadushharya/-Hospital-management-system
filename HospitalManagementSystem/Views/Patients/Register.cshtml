@@ -1,0 +1,79 @@
+@model Patient
+@{
+    ViewData["Title"] = "Register patient";
+    ViewBag.SidebarRole = "Reception";
+    Layout = "_DashboardLayout";
+    var fees = (List<FeeSetting>)ViewBag.RegistrationFees;
+}
+<h1 class="mb-4">Register patient</h1>
+
+@if (fees.Count == 0)
+{
+    <div class="alert alert-warning">
+        No active Registration fees are configured yet.
+        Ask an Admin to add one under <a asp-controller="FeeSettings" asp-action="Create">Fee settings</a> first.
+    </div>
+}
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<form asp-action="Register" method="post" style="max-width: 700px;">
+    <div class="row g-3">
+        <div class="col-md-8">
+            <label class="form-label">Full name</label>
+            <input asp-for="FullName" class="form-control" required />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Phone</label>
+            <input asp-for="Phone" class="form-control" required />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Gender</label>
+            <select asp-for="Gender" class="form-select">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Age</label>
+            <input asp-for="Age" class="form-control" />
+        </div>
+        <div class="col-md-4"></div>
+
+        <div class="col-md-6">
+            <label class="form-label">Wereda</label>
+            <input asp-for="Wereda" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Kebele</label>
+            <input asp-for="Kebele" class="form-control" />
+        </div>
+    </div>
+
+    <hr class="my-4" />
+    <h5>Registration fee</h5>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Select fee</label>
+            <select name="feeSettingId" class="form-select" required>
+                <option value="">-- select --</option>
+                @foreach (var f in fees)
+                {
+                    <option value="@f.Id">@f.PaymentName — @f.Amount</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Payment method</label>
+            <select name="paymentMethod" class="form-select">
+                <option value="@((int)PaymentMethod.Cash)">Cash</option>
+                <option value="@((int)PaymentMethod.BankTransfer)">Bank transfer</option>
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4" @(fees.Count == 0 ? "disabled" : "")>
+        Register &amp; issue invoice
+    </button>
+</form>

@@ -1,0 +1,39 @@
+﻿@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    Func<string, string, string> active = (c, a) =>
+        (controller == c && action == a) ? "active" : "";
+}
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link @active("Dashboard", "Reception")" asp-controller="Dashboard" asp-action="Reception">
+            Dashboard
+        </a>
+    </li>
+</ul>
+<div class="section-label">Patients</div>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link @active("Patients", "Register")" asp-controller="Patients" asp-action="Register">
+            Register patient
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @active("Patients", "Index")" asp-controller="Patients" asp-action="Index">
+            Patient list
+        </a>
+    </li>
+</ul>
+<div class="section-label">Billing</div>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link @active("Invoices", "Pending")" asp-controller="Invoices" asp-action="Pending">
+            Billing queue
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @active("Reports", "ReceptionDaily")" asp-controller="Reports" asp-action="ReceptionDaily">
+            Daily report
+        </a>
+    </li>
+</ul>

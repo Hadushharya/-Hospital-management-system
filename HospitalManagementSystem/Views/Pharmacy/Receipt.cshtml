@@ -1,0 +1,126 @@
+﻿@model Payment
+@{
+    ViewData["Title"] = "Receipt";
+    Layout = null;
+    var prescription = Model.Prescription;
+    var hospital = (HospitalSettings)ViewBag.Hospital;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Receipt</title>
+    <style>
+            .receipt {
+                width: 280px;
+                margin: 0 auto;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+            }
+
+                .receipt hr {
+                    border-top: 1px dashed #000;
+                }
+
+                .receipt table {
+                    width: 100%;
+                }
+
+                .receipt td {
+                    padding: 2px 0;
+                }
+
+            .text-center {
+                text-align: center;
+            }
+
+            .text-end {
+                text-align: right;
+            }
+
+            @@media print {
+                .no-print {
+                    display: none !important;
+                }
+
+                body {
+                    margin: 0;
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="text-center">
+            <strong>@hospital.Name</strong><br />
+            @if (!string.IsNullOrWhiteSpace(hospital.Address))
+            {
+                <span style="font-size:11px;">@hospital.Address<br /></span>
+            }
+            @if (!string.IsNullOrWhiteSpace(hospital.Phone) || !string.IsNullOrWhiteSpace(hospital.TinNumber))
+            {
+                <span style="font-size:11px;">
+                    @if (!string.IsNullOrWhiteSpace(hospital.Phone))
+                    {
+                        @:Tel: @hospital.Phone
+                    }
+                    @if (!string.IsNullOrWhiteSpace(hospital.TinNumber))
+                    {
+                        @:&nbsp;| TIN: @hospital.TinNumber
+                    }
+                </span>
+                <br />
+            }
+            Pharmacy Payment Receipt
+        </div>
+        <hr />
+        <div>Receipt #: @Model.ReceiptNo</div>
+        <div>Patient: @prescription.Consultation.Visit.Patient.FullName</div>
+        <div>Date: @Model.PaidAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+        <div>Payment method: @Model.PaymentMethod</div>
+        <hr />
+        <table>
+            @if (prescription.PrescriptionItems.Any())
+            {
+                @foreach (var item in prescription.PrescriptionItems)
+                {
+                    <tr>
+                        <td>@item.Medicine.Name x @item.Quantity</td>
+                        <td class="text-end">@((item.Medicine.SellingPrice * item.Quantity).ToString("0.00"))</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="2">@prescription.Notes</td></tr>
+            }
+        </table>
+        <hr />
+        <table>
+            <tr>
+                <td><strong>TOTAL</strong></td>
+                <td class="text-end"><strong>@Model.Amount.ToString("0.00")</strong></td>
+            </tr>
+        </table>
+        <hr />
+        <div class="text-center my-3">
+            <div id="qrcode"></div>
+        </div>
+        <hr />
+        <div class="text-center">Thank you</div>
+    </div>
+
+    <div class="text-center mt-3 no-print">
+        <button onclick="window.print()">Print receipt</button>
+        <a href="/Pharmacy/PendingPayments">Back to pending payments</a>
+    </div>
+
+    <script src="~/lib/qrcode/qrcode.min.js"></script>
+    <script>
+        var qrData = "Receipt: @Model.ReceiptNo | Patient: @prescription.Consultation.Visit.Patient.FullName | Amount: @Model.Amount.ToString("0.00") | Date: @Model.PaidAt.ToString("yyyy-MM-dd HH:mm")";
+        QRCode.toCanvas(document.createElement('canvas'), qrData, { width: 120, margin: 0 }, function (error, canvas) {
+        if (!error) document.getElementById('qrcode').appendChild(canvas);
+        });
+    </script>
+</body>
+</html>

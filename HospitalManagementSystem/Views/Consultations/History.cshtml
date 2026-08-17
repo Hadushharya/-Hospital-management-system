@@ -1,0 +1,29 @@
+﻿@model List<Patient>
+@{
+    ViewData["Title"] = "Patient history";
+    ViewBag.SidebarRole = "OPD";
+    Layout = "_DashboardLayout";
+}
+<form asp-action="History" method="get" class="d-flex gap-2 mb-4" style="max-width:400px">
+    <input type="text" name="q" class="form-control" placeholder="Search by name or phone..." value="@ViewBag.Query" />
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+@if (ViewBag.Query != null && Model.Count == 0)
+{
+    <p class="text-muted">No patients found.</p>
+}
+
+<table class="table">
+    <thead><tr><th>Name</th><th>Phone</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.FullName</td>
+                <td>@p.Phone</td>
+                <td><a class="btn btn-sm btn-outline-primary" asp-action="PatientHistory" asp-route-patientId="@p.Id">View history</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

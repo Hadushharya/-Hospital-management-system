@@ -1,0 +1,20 @@
+@model List<Patient>
+@{
+    ViewData["Title"] = "Patients"; ViewBag.SidebarRole = "Reception"; Layout = "_DashboardLayout";
+}
+<h1>Patients</h1>
+<a class="btn btn-primary mb-3" asp-action="Register">Register new patient</a>
+<table class="table table-striped">
+    <thead><tr><th>Name</th><th>Phone</th><th>Registered</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td>@p.FullName</td>
+            <td>@p.Phone</td>
+            <td>@p.CreatedAt.ToLocalTime()</td>
+            <td><a asp-action="Details" asp-route-id="@p.Id">View</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,45 @@
+﻿@using HospitalManagementSystem.Models
+@{
+    ViewData["Title"] = "Triage dashboard";
+    ViewBag.SidebarRole = "Triage";
+    Layout = "_DashboardLayout";
+}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Waiting for vitals</div>
+                <div class="fs-3 fw-bold">@ViewBag.WaitingForVitals</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Recorded today</div>
+                <div class="fs-3 fw-bold">@ViewBag.RecordedToday</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <a class="btn btn-primary" asp-controller="Triage" asp-action="Index">Go to pending vitals</a>
+</div>
+
+<div class="card">
+    <div class="card-header">Next up</div>
+    <table class="table mb-0">
+        <thead><tr><th>Patient</th><th>Visit date</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var v in (List<Visit>)ViewBag.RecentQueue)
+            {
+                <tr>
+                    <td>@v.Patient.FullName</td>
+                    <td>@v.VisitDate.ToLocalTime()</td>
+                    <td><a class="btn btn-sm btn-primary" asp-controller="Triage" asp-action="Record" asp-route-visitId="@v.Id">Record vitals</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,69 @@
+﻿@using HospitalManagementSystem.Models
+@{
+    ViewData["Title"] = "OPD dashboard";
+    ViewBag.SidebarRole = "OPD";
+    Layout = "_DashboardLayout";
+}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Waiting in queue</div>
+                <div class="fs-3 fw-bold">@ViewBag.WaitingInQueue</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Consultations today</div>
+                <div class="fs-3 fw-bold">@ViewBag.ConsultationsToday</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Active lab fees configured</div>
+                <div class="fs-3 fw-bold">@ViewBag.LabFeesConfigured</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <a class="btn btn-primary" asp-controller="Consultations" asp-action="Index">Go to consultation queue</a>
+</div>
+<div class="card">
+    <div class="card-header">Next up in queue</div>
+    <table class="table mb-0">
+        <thead><tr><th>Patient</th><th>Vitals</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var v in (List<Visit>)ViewBag.RecentQueue)
+            {
+                <tr>
+                    <td>@v.Patient.FullName</td>
+                    <td>@v.Triage?.Vitals</td>
+                    <td><a class="btn btn-sm btn-primary" asp-controller="Consultations" asp-action="Create" asp-route-visitId="@v.Id">Start consultation</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="card mt-4">
+    <div class="card-header">Recently consulted</div>
+    <table class="table mb-0">
+        <thead><tr><th>Patient</th><th>Diagnosis</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var c in (List<Consultation>)ViewBag.RecentConsultations)
+            {
+                <tr>
+                    <td>@c.Visit.Patient.FullName</td>
+                    <td>@c.Diagnosis</td>
+                    <td>@c.ConsultationDate.ToLocalTime().ToString("g")</td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-controller="Consultations" asp-action="Manage" asp-route-id="@c.Id">Open</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

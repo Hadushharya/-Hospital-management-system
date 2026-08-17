@@ -1,0 +1,63 @@
+@model List<Prescription>
+@{
+    ViewData["Title"] = "Ready to dispense"; ViewBag.SidebarRole = "Pharmacy"; Layout = "_DashboardLayout";
+}
+
+<h1>Ready to dispense</h1>
+@if (!Model.Any())
+{
+    <p class="text-muted">Nothing paid and ready yet.</p>
+}
+@foreach (var p in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>@p.Consultation.Visit.Patient.FullName</h5>
+            @if (!string.IsNullOrWhiteSpace(p.Notes))
+            {
+                <p class="fst-italic">@p.Notes</p>
+            }
+            <ul>
+                @foreach (var item in p.PrescriptionItems)
+                {
+                    <li>@item.Medicine.Name x @item.Quantity (in stock: @item.Medicine.QuantityInStock)</li>
+                }
+            </ul>
+            <form asp-action="Dispense" method="post">
+                <input type="hidden" name="prescriptionId" value="@p.Id" />
+                <button class="btn btn-primary" type="submit">Dispense</button>
+            </form>
+        </div>
+    </div>
+}
+
+@{
+    var awaitingPayment = (List<Prescription>)ViewBag.AwaitingPayment;
+}
+@if (awaitingPayment.Count > 0)
+{
+    <h4 class="mt-5">Awaiting payment</h4>
+    <p class="text-muted small">These have been prescribed but not yet paid — send the patient to Cashier first.</p>
+    @foreach (var p in awaitingPayment)
+    {
+        <div class="card mb-3 border-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5>@p.Consultation.Visit.Patient.FullName</h5>
+                    <span class="badge bg-warning text-dark align-self-start">Awaiting payment</span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(p.Notes))
+                {
+                    <p class="fst-italic">@p.Notes</p>
+                }
+                <ul>
+                    @foreach (var item in p.PrescriptionItems)
+                    {
+                        <li>@item.Medicine.Name x @item.Quantity</li>
+                    }
+                </ul>
+                <p class="mb-0 small text-warning">Tell the patient to pay at Cashier before returning here.</p>
+            </div>
+        </div>
+    }
+}

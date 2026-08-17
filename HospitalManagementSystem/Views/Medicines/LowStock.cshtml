@@ -1,0 +1,12 @@
+@model List<Medicine>
+@{ ViewData["Title"] = "Low stock"; }
+<h1>Low stock — reorder needed</h1>
+<table class="table table-warning">
+    <thead><tr><th>Name</th><th>Stock</th><th>Reorder level</th></tr></thead>
+    <tbody>
+    @foreach (var m in Model)
+    {
+        <tr><td>@m.Name</td><td>@m.QuantityInStock</td><td>@m.ReorderLevel</td></tr>
+    }
+    </tbody>
+</table>

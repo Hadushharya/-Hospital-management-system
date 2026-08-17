@@ -1,0 +1,16 @@
+@model List<MedicalGood>
+@{ ViewData["Title"] = "Medical goods"; }
+<h1>Medical goods</h1>
+<a class="btn btn-primary mb-3" asp-action="Create">Register item</a>
+<table class="table table-striped">
+    <thead><tr><th>Name</th><th>Batch</th><th>Expiry</th><th>Stock</th><th>Unit</th><th>Price</th></tr></thead>
+    <tbody>
+    @foreach (var g in Model)
+    {
+        <tr class="@(g.QuantityInStock <= g.ReorderLevel ? "table-warning" : "")">
+            <td>@g.Name</td><td>@g.BatchNo</td><td>@g.ExpiryDate</td>
+            <td>@g.QuantityInStock</td><td>@g.UnitOfMeasure</td><td>@g.SellingPrice</td>
+        </tr>
+    }
+    </tbody>
+</table>

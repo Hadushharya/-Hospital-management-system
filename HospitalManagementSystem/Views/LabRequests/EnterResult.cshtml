@@ -1,0 +1,15 @@
+@model LabResult
+@{ ViewData["Title"] = "Enter result"; ViewBag.SidebarRole = "Lab"; Layout = "_DashboardLayout"; var req = (LabRequest)ViewBag.LabRequest; }
+<h1>@req.TestName — @req.Consultation.Visit.Patient.FullName</h1>
+<form asp-action="EnterResult" method="post">
+    <input type="hidden" asp-for="LabRequestId" />
+    <div class="mb-3">
+        <label class="form-label">Result</label>
+        <textarea asp-for="ResultValue" class="form-control" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit result</button>
+</form>

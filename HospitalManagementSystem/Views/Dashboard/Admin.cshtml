@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Admin dashboard";
+    ViewBag.SidebarRole = "Admin";
+    Layout = "_DashboardLayout";
+}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Total users</div>
+                <div class="fs-3 fw-bold">@ViewBag.TotalUsers <span class="fs-6 text-muted">(@ViewBag.ActiveUsers active)</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Total patients</div>
+                <div class="fs-3 fw-bold">@ViewBag.TotalPatients</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Visits today</div>
+                <div class="fs-3 fw-bold">@ViewBag.VisitsToday</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Revenue today</div>
+                <div class="fs-3 fw-bold">@(((decimal)ViewBag.RevenueToday).ToString("0.00"))</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-warning">
+    Pending invoice total: <strong>@(((decimal)ViewBag.PendingInvoiceTotal).ToString("0.00"))</strong>
+    — <a asp-controller="Invoices" asp-action="Pending">view billing queue</a>
+</div>
+
+<div class="d-flex gap-2">
+    <a class="btn btn-primary" asp-controller="Users" asp-action="Create">+ Create user</a>
+    <a class="btn btn-outline-secondary" asp-controller="Users" asp-action="Index">Manage users</a>
+</div>

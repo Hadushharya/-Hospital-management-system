@@ -1,0 +1,33 @@
+@model List<Prescription>
+@{
+    ViewData["Title"] = "Prescriptions awaiting payment"; ViewBag.SidebarRole = "Cashier"; Layout = "_DashboardLayout";
+}
+<h1>Prescriptions awaiting payment</h1>
+@foreach (var p in Model)
+{
+    <div class="card mb-3"><div class="card-body">
+        <h5>@p.Consultation.Visit.Patient.FullName</h5>
+        <ul>
+            @foreach (var item in p.PrescriptionItems)
+            {
+                <li>@item.Medicine.Name x @item.Quantity — @(item.Medicine.SellingPrice * item.Quantity)</li>
+            }
+        </ul>
+        <form asp-action="CollectPayment" method="post" class="d-flex gap-2 align-items-end">
+            <input type="hidden" name="prescriptionId" value="@p.Id" />
+            <div>
+                <label class="form-label">Amount</label>
+                <input name="amount" type="number" step="0.01" class="form-control"
+                       value="@p.PrescriptionItems.Sum(i => i.Medicine.SellingPrice * i.Quantity)" required />
+            </div>
+            <div>
+                <label class="form-label">Payment method</label>
+                <select name="paymentMethod" class="form-select">
+                    <option value="@((int)PaymentMethod.Cash)">Cash</option>
+                    <option value="@((int)PaymentMethod.BankTransfer)">Bank transfer</option>
+                </select>
+            </div>
+            <button class="btn btn-success" type="submit">Collect payment</button>
+        </form>
+    </div></div>
+}

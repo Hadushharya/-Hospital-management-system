@@ -1,0 +1,26 @@
+@model Visit
+@{ ViewData["Title"] = "Payment complete"; }
+<div class="alert alert-success">
+    <h4 class="alert-heading">Payment complete</h4>
+    <p>Registration for <strong>@Model.Patient.FullName</strong> is done and the fee has been collected.</p>
+</div>
+
+<table class="table">
+    <tbody>
+    @foreach (var inv in Model.Invoices)
+    {
+        <tr>
+            <th>@inv.FeeSetting?.PaymentName (Order #@inv.FeeSetting?.Id)</th>
+            <td>@inv.Amount</td>
+            <td><span class="badge bg-success">@inv.Status</span></td>
+            <td>@inv.PaymentMethod</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<form asp-action="SendToTriage" method="post" class="mt-3">
+    <input type="hidden" name="visitId" value="@Model.Id" />
+    <button type="submit" class="btn btn-primary">Send patient to Triage</button>
+</form>
+<a class="btn btn-outline-secondary mt-3" asp-action="Index">Back to patient list</a>

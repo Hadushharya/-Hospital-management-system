@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["Title"] = "Daily report";
+    ViewBag.SidebarRole = "Reception";
+    Layout = "_DashboardLayout";
+    var reportDate = (DateTime)ViewBag.ReportDate;
+    var invoices = (List<Invoice>)ViewBag.Invoices;
+    var hospital = (HospitalSettings)ViewBag.Hospital;
+}
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <form method="get" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label small mb-0">Date</label>
+            <input type="date" name="date" class="form-control" value="@reportDate.ToString("yyyy-MM-dd")" />
+        </div>
+        <button type="submit" class="btn btn-primary">View</button>
+    </form>
+    <button class="btn btn-outline-secondary" onclick="window.print()">Print report</button>
+</div>
+
+<!-- On-screen view -->
+<div class="no-print">
+    <h3 class="mb-1">Daily Report — Reception</h3>
+    <p class="text-muted">@reportDate.ToString("dddd, dd MMMM yyyy")</p>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-muted small">Patients registered</div>
+                    <div class="fs-4 fw-bold">@ViewBag.PatientsRegistered</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-muted small">Invoices collected</div>
+                    <div class="fs-4 fw-bold">@invoices.Count</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-muted small">Cash collected</div>
+                    <div class="fs-4 fw-bold">@(((decimal)ViewBag.CashTotal).ToString("0.00"))</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-muted small">Bank transfer collected</div>
+                    <div class="fs-4 fw-bold">@(((decimal)ViewBag.BankTransferTotal).ToString("0.00"))</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-sm">
+        <thead><tr><th>Fee</th><th>Type</th><th>Payment method</th><th class="text-end">Amount</th></tr></thead>
+        <tbody>
+            @foreach (var inv in invoices)
+            {
+                <tr>
+                    <td>@inv.FeeSetting?.PaymentName</td>
+                    <td>@inv.FeeType</td>
+                    <td>@inv.PaymentMethod</td>
+                    <td class="text-end">@inv.Amount.ToString("0.00")</td>
+                </tr>
+            }
+            @if (!invoices.Any())
+            {
+                <tr><td colspan="4" class="text-muted">No invoices collected on this date.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Printable version -->
+<div id="printArea" class="d-none">
+    <div class="text-center mb-4">
+        <h4 class="mb-0">@hospital.Name</h4>
+        @if (!string.IsNullOrWhiteSpace(hospital.Address))
+        {
+            <div>@hospital.Address</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(hospital.Phone))
+        {
+            <div>Tel: @hospital.Phone</div>
+        }
+        <hr />
+        <div class="fw-bold" style="text-decoration: underline;">RECEPTION DAILY REPORT</div>
+        <div class="text-muted small">@reportDate.ToString("dddd, dd MMMM yyyy")</div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr><th style="width:60px">S/N</th><th>Fee</th><th>Method</th><th class="text-end">Amount</th></tr>
+        </thead>
+        <tbody>
+            @{
+                int sn = 1;
+            }
+            @foreach (var inv in invoices)
+            {
+                <tr>
+                    <td>@sn</td>
+                    <td>@inv.FeeSetting?.PaymentName (@inv.FeeType)</td>
+                    <td>@inv.PaymentMethod</td>
+                    <td class="text-end">@inv.Amount.ToString("0.00")</td>
+                </tr>
+                sn++;
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">Cash total</td>
+                <td class="text-end">@(((decimal)ViewBag.CashTotal).ToString("0.00"))</td>
+            </tr>
+            <tr>
+                <td colspan="3">Bank transfer total</td>
+                <td class="text-end">@(((decimal)ViewBag.BankTransferTotal).ToString("0.00"))</td>
+            </tr>
+            <tr class="fw-bold">
+                <td colspan="3">GRAND TOTAL</td>
+                <td class="text-end">@(((decimal)ViewBag.InvoiceTotal).ToString("0.00"))</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="mt-5 pt-5 d-flex justify-content-between">
+        <div>Prepared by: ____________________</div>
+        <div>Signature: ____________________</div>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .hms-sidebar, .hms-topbar {
+            display: none !important;
+        }
+
+        .hms-content {
+            margin-left: 0 !important;
+        }
+
+        #printArea {
+            display: block !important;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+        }
+    }
+</style>

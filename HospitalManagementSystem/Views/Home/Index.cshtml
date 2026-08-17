@@ -1,0 +1,70 @@
+@{ ViewData["Title"] = "Dashboard"; }
+<h1>Hospital Management System</h1>
+<p class="text-muted">Signed in as @User.Identity!.Name</p>
+<div class="row g-3 mt-2">
+    @if (User.IsInRole(StaffRoles.Receptionist) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">Reception</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="Patients" asp-action="Register">Register patient</a>
+                <a class="btn btn-outline-secondary btn-sm" asp-controller="Invoices" asp-action="Pending">Billing queue</a>
+            </div></div>
+        </div>
+    }
+    @if (User.IsInRole(StaffRoles.TriageNurse) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">Triage</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="Triage" asp-action="Index">Pending vitals</a>
+            </div></div>
+        </div>
+    }
+    @if (User.IsInRole(StaffRoles.OpdRolesCsv) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">OPD</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="Consultations" asp-action="Index">Consultation queue</a>
+            </div></div>
+        </div>
+    }
+    @if (User.IsInRole(StaffRoles.LabTechnician) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">Laboratory</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="LabRequests" asp-action="Queue">Paid test queue</a>
+            </div></div>
+        </div>
+    }
+    @if (User.IsInRole(StaffRoles.StoreMan) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">Store</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="Medicines" asp-action="Create">Register medicine</a>
+                <a class="btn btn-outline-secondary btn-sm" asp-controller="Medicines" asp-action="LowStock">Low stock</a>
+            </div></div>
+        </div>
+    }
+    @if (User.IsInRole(StaffRoles.Cashier) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">Cashier</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="Pharmacy" asp-action="PendingPayments">Pending payments</a>
+            </div></div>
+        </div>
+    }
+    @if (User.IsInRole(StaffRoles.Pharmacist) || User.IsInRole(StaffRoles.Admin))
+    {
+        <div class="col-md-4">
+            <div class="card"><div class="card-body">
+                <h5 class="card-title">Pharmacy</h5>
+                <a class="btn btn-primary btn-sm" asp-controller="Pharmacy" asp-action="ReadyToDispense">Ready to dispense</a>
+            </div></div>
+        </div>
+    }
+</div>

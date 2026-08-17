@@ -1,0 +1,114 @@
+@model Triage
+@{ ViewData["Title"] = "Record vitals"; ViewBag.SidebarRole = "Triage"; Layout = "_DashboardLayout"; var visit = (Visit)ViewBag.Visit; }
+<h1>Record vitals — @visit.Patient.FullName</h1>
+
+<form asp-action="Record" method="post" id="triageForm" onsubmit="return buildVitalsString();">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <input type="hidden" asp-for="VisitId" />
+
+    <!-- The actual field the server binds to — built from the rows below just before submit -->
+    <input type="hidden" id="VitalsHidden" name="Vitals" />
+
+    <label class="form-label">Vitals</label>
+    <div id="vitalRows">
+        <div class="row g-2 mb-2 vital-row">
+            <div class="col-4">
+                <select class="form-select vital-type">
+                    <option value="">-- select --</option>
+                    <option value="Blood Pressure" data-unit="mmHg" data-placeholder="120/80">Blood Pressure</option>
+                    <option value="Temperature" data-unit="°C" data-placeholder="37.1">Temperature</option>
+                    <option value="Pulse" data-unit="bpm" data-placeholder="78">Pulse</option>
+                    <option value="Respiratory Rate" data-unit="breaths/min" data-placeholder="16">Respiratory Rate</option>
+                    <option value="Oxygen Saturation" data-unit="%" data-placeholder="98">Oxygen Saturation</option>
+                    <option value="Weight" data-unit="kg" data-placeholder="65">Weight</option>
+                    <option value="Height" data-unit="cm" data-placeholder="170">Height</option>
+                    <option value="Blood Sugar" data-unit="mg/dL" data-placeholder="90">Blood Sugar</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <input type="text" class="form-control vital-value" placeholder="value" />
+            </div>
+            <div class="col-3 d-flex align-items-center">
+                <span class="vital-unit text-muted small"></span>
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">&times;</button>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="addVitalRow()">+ Add vital sign</button>
+
+    <div class="mb-3">
+        <label class="form-label">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Send to</label>
+        <select name="assignedOpdRole" class="form-select" required>
+            <option value="">-- select OPD department --</option>
+            @foreach (var role in (string[])ViewBag.OpdRoles)
+            {
+                var label = role switch
+                {
+                    "EmergencyOPD" => "Emergency OPD",
+                    "AdultOPD" => "Adult OPD",
+                    "ChildOPD" => "Child OPD",
+                    "FamilyPlanningOPD" => "Family Planning OPD",
+                    _ => role
+                };
+                <option value="@role">@label</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save &amp; send to OPD</button>
+</form>
+
+<script>
+    function addVitalRow() {
+        var container = document.getElementById('vitalRows');
+        var row = container.querySelector('.vital-row').cloneNode(true);
+        row.querySelectorAll('select, input').forEach(el => el.value = '');
+        row.querySelector('.vital-unit').textContent = '';
+        container.appendChild(row);
+        wireRow(row);
+    }
+
+    function removeRow(btn) {
+        var container = document.getElementById('vitalRows');
+        if (container.querySelectorAll('.vital-row').length > 1) {
+            btn.closest('.vital-row').remove();
+        }
+    }
+
+    function wireRow(row) {
+        var select = row.querySelector('.vital-type');
+        var valueInput = row.querySelector('.vital-value');
+        var unitSpan = row.querySelector('.vital-unit');
+        select.addEventListener('change', function () {
+            var opt = select.options[select.selectedIndex];
+            var unit = opt.getAttribute('data-unit') || '';
+            valueInput.placeholder = opt.getAttribute('data-placeholder') || 'value';
+            unitSpan.textContent = unit;
+        });
+    }
+
+    document.querySelectorAll('.vital-row').forEach(wireRow);
+
+    function buildVitalsString() {
+        var parts = [];
+        document.querySelectorAll('.vital-row').forEach(function (row) {
+            var type = row.querySelector('.vital-type').value;
+            var value = row.querySelector('.vital-value').value.trim();
+            var unit = row.querySelector('.vital-unit').textContent;
+            if (type && value) {
+                parts.push(type + ': ' + value + (unit ? ' ' + unit : ''));
+            }
+        });
+        if (parts.length === 0) {
+            alert('Enter at least one vital sign.');
+            return false;
+        }
+        document.getElementById('VitalsHidden').value = parts.join(', ');
+        return true;
+    }
+</script>

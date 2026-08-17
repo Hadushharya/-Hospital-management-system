@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "New visit";
+    ViewBag.SidebarRole = "Reception";
+    Layout = "_DashboardLayout";
+    var patient = (Patient)ViewBag.Patient;
+    var fees = (List<FeeSetting>)ViewBag.RegistrationFees;
+}
+<h1 class="mb-3">New visit — @patient.FullName</h1>
+<p class="text-muted">Last visit was more than 5 days ago (or this is their first return visit). A new registration fee is required.</p>
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<form asp-action="Revisit" method="post" style="max-width:500px">
+    <input type="hidden" name="patientId" value="@patient.Id" />
+    <div class="mb-3">
+        <label class="form-label">Select fee</label>
+        <select name="feeSettingId" class="form-select" required>
+            <option value="">-- select --</option>
+            @foreach (var f in fees)
+            {
+                <option value="@f.Id">@f.PaymentName — @f.Amount</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Payment method</label>
+        <select name="paymentMethod" class="form-select">
+            <option value="@((int)PaymentMethod.Cash)">Cash</option>
+            <option value="@((int)PaymentMethod.BankTransfer)">Bank transfer</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Register visit &amp; issue invoice</button>
+</form>

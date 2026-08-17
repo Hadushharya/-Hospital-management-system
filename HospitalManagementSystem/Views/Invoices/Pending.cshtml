@@ -1,0 +1,56 @@
+@model List<IGrouping<int, Invoice>>
+@{
+    ViewData["Title"] = "Billing queue";
+}
+<h1>Pending invoices (lab fees)</h1>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No pending invoices.</p>
+}
+
+@foreach (var group in Model)
+{
+    var invoices = group.ToList();
+    var visit = invoices.First().Visit;
+    var total = invoices.Sum(i => i.Amount);
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+            <strong>@visit.Patient.FullName</strong>
+            <span class="text-muted small">Visit #@visit.Id</span>
+        </div>
+        <div class="card-body">
+            <table class="table table-sm mb-3">
+                <thead>
+                    <tr><th>Test / Fee</th><th class="text-end">Unit price</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var inv in invoices)
+                    {
+                        <tr>
+                            <td>@inv.FeeSetting?.PaymentName (@inv.FeeType)</td>
+                            <td class="text-end">@inv.Amount.ToString("0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="fw-bold border-top">
+                        <td>Total</td>
+                        <td class="text-end">@total.ToString("0.00")</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <form asp-action="CollectAll" method="post" class="d-flex gap-2 align-items-end">
+                <input type="hidden" name="visitId" value="@visit.Id" />
+                <div>
+                    <label class="form-label small mb-0">Payment method</label>
+                    <select name="paymentMethod" class="form-select form-select-sm">
+                        <option value="@((int)PaymentMethod.Cash)">Cash</option>
+                        <option value="@((int)PaymentMethod.BankTransfer)">Bank transfer</option>
+                    </select>
+                </div>
+                <button class="btn btn-success btn-sm" type="submit">Collect all &amp; print receipt</button>
+            </form>
+        </div>
+    </div>
+}

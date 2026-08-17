@@ -1,0 +1,57 @@
+﻿@model Visit
+@{
+    ViewData["Title"] = "Receipt";
+    var invoices = (List<Invoice>)ViewBag.PaidInvoices;
+    var total = invoices.Sum(i => i.Amount);
+}
+<style>
+    .receipt {
+        width: 280px;
+        margin: 0 auto;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+    }
+    .receipt hr { border-top: 1px dashed #000; }
+    .receipt table { width: 100%; }
+    .receipt td { padding: 2px 0; }
+    @@media print {
+        header, footer, .no-print { display: none !important; }
+        body { margin: 0; }
+        .receipt { width: 100%; }
+    }
+</style>
+
+<div class="receipt">
+    <div class="text-center">
+        <strong>Hospital Management System</strong><br />
+        Payment Receipt
+    </div>
+    <hr />
+    <div>Patient: @Model.Patient.FullName</div>
+    <div>Visit #: @Model.Id</div>
+    <div>Date: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+    <hr />
+    <table>
+        @foreach (var inv in invoices)
+        {
+            <tr>
+                <td>@inv.FeeSetting?.PaymentName</td>
+                <td class="text-end">@inv.Amount.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+    <hr />
+    <table>
+        <tr class="fw-bold">
+            <td>TOTAL</td>
+            <td class="text-end">@total.ToString("0.00")</td>
+        </tr>
+    </table>
+    <hr />
+    <div class="text-center small">Thank you</div>
+</div>
+
+<div class="text-center mt-3 no-print">
+    <button class="btn btn-primary" onclick="window.print()">Print receipt</button>
+    <a class="btn btn-secondary" asp-action="Pending">Back to billing queue</a>
+</div>

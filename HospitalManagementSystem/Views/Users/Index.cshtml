@@ -1,0 +1,37 @@
+﻿@using HospitalManagementSystem.Controllers
+@model List<UserListItem>
+@{
+    ViewData["Title"] = "User management";
+}
+<h1>Users</h1>
+<a class="btn btn-primary mb-3" asp-action="Create">+ Create user</a>
+<table class="table">
+    <thead><tr><th>Name</th><th>Email</th><th>Role(s)</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            <tr>
+                <td>@row.User.FullName</td>
+                <td>@row.User.Email</td>
+                <td>@string.Join(", ", row.Roles)</td>
+                <td>@(row.User.IsActive ? "Active" : "Inactive")</td>
+               @*  <td>
+                    <form asp-action="ToggleActive" asp-route-id="@row.User.Id" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">
+                            @(row.User.IsActive ? "Deactivate" : "Activate")
+                        </button>
+
+                    </form>
+                </td> *@
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@row.User.Id">Edit</a>
+                    <form asp-action="ToggleActive" asp-route-id="@row.User.Id" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">
+                            @(row.User.IsActive ? "Deactivate" : "Activate")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

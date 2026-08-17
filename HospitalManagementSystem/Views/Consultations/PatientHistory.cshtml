@@ -1,0 +1,68 @@
+﻿@model Patient
+@{
+    ViewData["Title"] = "Patient history";
+    ViewBag.SidebarRole = "OPD";
+    Layout = "_DashboardLayout";
+}
+<h4>@Model.FullName <span class="text-muted small">(@Model.Phone)</span></h4>
+
+@foreach (var visit in Model.Visits.OrderByDescending(v => v.VisitDate))
+{
+    foreach (var c in visit.Consultations.OrderByDescending(c => c.ConsultationDate))
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                @c.ConsultationDate.ToLocalTime().ToString("g")
+            </div>
+            <div class="card-body">
+                <p><strong>Diagnosis:</strong> @c.Diagnosis</p>
+                @if (!string.IsNullOrWhiteSpace(c.Notes))
+                {
+                    <p><strong>Notes:</strong> @c.Notes</p>
+                }
+
+                @if (c.LabRequests.Any())
+                {
+                    <p class="mb-1"><strong>Lab tests:</strong></p>
+                    <ul>
+                        @foreach (var lr in c.LabRequests)
+                        {
+                            <li>
+                                @lr.TestName — @lr.Status
+                                @if (lr.LabResult != null)
+                                {
+                                    <span>: @lr.LabResult.ResultValue</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+
+                @if (c.Prescriptions.Any())
+                {
+                    <p class="mb-1"><strong>Prescriptions:</strong></p>
+                    <ul>
+                        @foreach (var p in c.Prescriptions)
+                        {
+                            <li>
+                                @p.Status
+                                
+
+                                @if (p.PrescriptionItems.Any())
+                                {
+                                    <ul>
+                                        @foreach (var item in p.PrescriptionItems)
+                                        {
+                                            <li>@item.Medicine.Name x @item.Quantity</li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+}
+<a class="btn btn-secondary" asp-action="History">&laquo; Back to search</a>

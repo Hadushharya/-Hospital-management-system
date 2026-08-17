@@ -1,0 +1,54 @@
+﻿@using HospitalManagementSystem.Models
+@{
+    ViewData["Title"] = "Lab dashboard";
+    ViewBag.SidebarRole = "Lab";
+    Layout = "_DashboardLayout";
+}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Paid, waiting for result</div>
+                <div class="fs-3 fw-bold">@ViewBag.PaidQueueCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Ready to send</div>
+                <div class="fs-3 fw-bold">@ViewBag.ReadyToSendCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-muted small">Sent today</div>
+                <div class="fs-3 fw-bold">@ViewBag.SentToday</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2 mb-4">
+    <a class="btn btn-primary" asp-controller="LabRequests" asp-action="Queue">Go to paid test queue</a>
+    <a class="btn btn-outline-secondary" asp-controller="LabRequests" asp-action="ReadyToSend">Go to ready-to-send</a>
+</div>
+
+<div class="card">
+    <div class="card-header">Next up</div>
+    <table class="table mb-0">
+        <thead><tr><th>Patient</th><th>Test</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var lr in (List<LabRequest>)ViewBag.RecentQueue)
+            {
+                <tr>
+                    <td>@lr.Consultation.Visit.Patient.FullName</td>
+                    <td>@lr.TestName</td>
+                    <td><a class="btn btn-sm btn-primary" asp-controller="LabRequests" asp-action="EnterResult" asp-route-id="@lr.Id">Enter result</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

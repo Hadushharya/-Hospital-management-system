@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Create user"; var roles = (string[])ViewBag.Roles;
+}
+<h1>Create user</h1>
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Full name</label>
+        <input name="fullName" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input name="userName" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email (optional)</label>
+        <input name="email" type="email" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input name="password" type="password" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Role</label>
+        <select name="role" class="form-select" required>
+            <option value="">-- select role --</option>
+            @foreach (var r in roles)
+            {
+                <option value="@r">@r</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create user</button>
+</form>
